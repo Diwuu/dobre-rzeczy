@@ -23,6 +23,7 @@ urlpatterns = [
     path('index/', views.IndexView.as_view(), name="home"),
     path('index.html/', views.IndexView.as_view(), name="home"),
     path('add/', views.AddFormView.as_view(), name="addForm"),
+    path('logout/', views.Logout.as_view(), name="logout"),
     path('register/', views.RegisterView.as_view(), name="register"),
     path('login/', views.LoginView.as_view(), name="login"),
 ]

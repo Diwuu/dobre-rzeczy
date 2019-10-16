@@ -12,17 +12,24 @@ def bags_counter():
 def supported_org_counter():
     return Institution.objects.filter().count()
 
+
 class IndexView(View):
     def get(self, request):
-        return render(request, "index.html", {"bags_counter": bags_counter(), "supported_org_counter": supported_org_counter()})
+        fundations = Institution.objects.filter(type="fundacja")
+        nonGovOrg = Institution.objects.filter(type="organizacja pozarządowa")
+        localCollect = Institution.objects.filter(type="zbiórka lokalna")
+
+        ctx = {"fundations": fundations, "nonGovOrg": nonGovOrg, "localCollect": localCollect, "bags_counter": bags_counter(), "supported_org_counter": supported_org_counter()}
+        return render(request, "index.html", ctx)
 
 
 class LoginView(View):
     def get(self, request):
         return render(request, 'login.html')
+
     def post(self, request):
-        username = request.POST.get('email', '')
-        password = request.POST.get('password', '')
+        username = request.POST.get('email')
+        password = request.POST.get('password')
         user = authenticate(username=username, password=password)
         if user is not None:
             login(request, user)
@@ -31,10 +38,10 @@ class LoginView(View):
             return redirect('/register')
 
 
-
 class RegisterView(View):
     def get(self, request):
         return render(request, 'register.html')
+
     def post(self, request):
         mail = request.POST.get("email")
         if mail in User.objects.values_list('username', flat=True):
@@ -60,7 +67,7 @@ class RegisterView(View):
 
 
 class Logout(View):
-    def post(self, request):
+    def get(self, request):
         logout(request)
         return redirect('/')
 

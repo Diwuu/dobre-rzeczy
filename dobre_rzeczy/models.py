@@ -11,12 +11,15 @@ class Institution(models.Model):
         ("fundacja", "fundacja"),
         ("organizacja pozarządowa", "organizacja pozarządowa"),
         ("zbiórka lokalna", "zbiórka lokalna"),
-        ("domyślnie fundacja", "domyślnie fundacja"),
     )
     name = models.CharField(max_length=64)
     description = models.TextField()
-    type = models.CharField(choices=TYPES, max_length=64)
+    type = models.CharField(choices=TYPES, max_length=64, default="fundacja")
     categories = models.ManyToManyField(Category)
+
+    def lists(self):
+        lt = list(self.categories.values_list())
+        return ', '.join([item for t in lt for item in t if not isinstance(item, int)])
 
 
 class Donation(models.Model):
