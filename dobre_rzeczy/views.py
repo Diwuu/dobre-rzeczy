@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 from django.http import HttpResponse
 from django.contrib.auth import login, logout, authenticate
-from .models import Donation, Institution, User
+from .models import Donation, Institution, User, Category
 
 
 def bags_counter():
@@ -63,7 +63,7 @@ class RegisterView(View):
                 http = "Dziękujemy! Proces rejestracji został pomyślnie zakończony. " + "<meta http-equiv=\"refresh\" content=\"3\;url=index.html/\" />"
                 user = authenticate(username=mail, password=passwordvalue1)
                 login(request, user)
-                return HttpResponse(http)
+                return redirect(http)
 
 
 class Logout(View):
@@ -74,4 +74,9 @@ class Logout(View):
 
 class AddFormView(View):
     def get(self, request):
-        return render(request, 'form.html')
+        if not request.user.is_authenticated:
+            return redirect("/login")
+        else:
+            categories = Category.objects.all()
+            institusions = Institution.objects.all()
+            return render(request, 'form.html', {"categories": categories, "institutions": institusions})
